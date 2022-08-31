@@ -10,6 +10,6 @@ export default function clearData(req, res, next) {
       }
     }
   }
-  res.status(200).send();
+  // console.log(data);
   next();
 };
