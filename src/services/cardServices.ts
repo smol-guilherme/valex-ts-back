@@ -16,5 +16,11 @@ export function isCVVValid(requestData, card) {
 export async function isCardValid(cardData) {
   const card = await findById(cardData.cardId);
   if(card === undefined) throw { type: 'not_found_error' };
+  isPasswordCorrect(cardData.password, card.password);
   return card;
+}
+
+function isPasswordCorrect(userPassword: string, cardPassword: string) {
+  if(userPassword !== cryptr.decrypt(cardPassword)) throw { type: 'ownership_not_match_error' };
+  return;
 }

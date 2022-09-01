@@ -29,9 +29,11 @@ function setSchema(objectData: Object): string {
         return "workerCard";
       case "amount":
         return "cardLoad";
+      case "password":
+        return "cardBlock";
       default:
         break;
-      }
     }
-  throw { type: 'no_schema_error' }
+  }
+  throw { type: "no_schema_error" };
 }

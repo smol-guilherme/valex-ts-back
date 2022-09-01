@@ -119,6 +119,23 @@ export async function update(id: number, cardData: CardUpdateData) {
   );
 }
 
+export async function toggleBlock(id: number, cardData: CardUpdateData) {
+  const { objectColumns: cardColumns, objectValues: cardValues } =
+    mapObjectToUpdateQuery({
+      object: cardData,
+      offset: 2,
+    });
+
+  return await connection.query(
+    `
+    UPDATE cards
+      SET ${cardColumns}
+    WHERE $1=id;
+  `,
+    [id, ...cardValues]
+  );
+}
+
 export async function remove(id: number) {
   connection.query<any, [number]>("DELETE FROM cards WHERE id=$1", [id]);
 }

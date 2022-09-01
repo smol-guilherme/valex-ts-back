@@ -20,3 +20,8 @@ export const cardLoad = Joi.object({
     cardId: Joi.number().required(),
     amount: Joi.number().min(1),
 })
+
+export const cardBlock = Joi.object({
+    cardId: Joi.number().required(),
+    password: Joi.string().pattern(/[0-9]{4}/).required(),
+})
