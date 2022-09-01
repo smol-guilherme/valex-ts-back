@@ -5,10 +5,12 @@ import { insert, CardInsertData } from "../repositories/cardRepository.js";
 import { editDate, editNameToCard } from "./dataFormatServices.js";
 import { isCardExpired, isCardValid } from "./cardServices.js";
 import * as recharges from "../repositories/rechargeRepository.js";
+import { findByApiKey } from "../repositories/companyRepository.js";
 
 const cryptr = new Cryptr(process.env.SECRET_KEY);
 
-export async function createUserCard(workerData) {
+export async function createUserCard(workerData, companyAuth) {
+  await isCompanyValid(companyAuth);
   const entry = await findNameFromDatabase(Number(workerData.workerId));
   if(entry === undefined) throw { type: 'not_found_error' };
   const cardName: string = editNameToCard(entry.fullName);
@@ -29,7 +31,8 @@ export async function createUserCard(workerData) {
   return { workerId: workerData.workerId, CVV };
 }
 
-export async function loadCardBalance(loadData, companyData) {
+export async function loadCardBalance(loadData, companyAuth) {
+  const companyData = await isCompanyValid(companyAuth);
   const card = await isCardValid(loadData);
   isCardExpired(card);
   const insertData: recharges.RechargeInsertData = {
@@ -45,6 +48,8 @@ async function findNameFromDatabase(wId: number) {
   return response;
 }
 
-async function findCompanyFromDatabase() {
-  // não esquecer disso aq
+export async function isCompanyValid(companyAuth) {
+  const response = await findByApiKey(companyAuth['x-api-key']);
+  if(response === undefined) throw { type: 'not_found_error' };
+  return response;
 }
