@@ -27,8 +27,8 @@ function setSchema(objectData: Object): string {
         return "companyId";
       case "CVV":
         return "workerCard";
-      case "shortUrl":
-        return "shortUrl";
+      case "amount":
+        return "cardLoad";
       default:
         break;
       }

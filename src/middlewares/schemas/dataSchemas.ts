@@ -10,8 +10,13 @@ export const companyId = Joi.object({
 })
 
 export const workerCard = Joi.object({
-    cardId: Joi.number(),
+    cardId: Joi.number().required(),
     CVV: Joi.string().pattern(/[0-9]{3}/).required(),
     password: Joi.string().pattern(/[0-9]{4}/).required(),
     repeatPassword: Joi.ref('password')
+})
+
+export const cardLoad = Joi.object({
+    cardId: Joi.number().required(),
+    amount: Joi.number().min(1),
 })
