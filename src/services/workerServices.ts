@@ -1,9 +1,6 @@
-import Cryptr from "cryptr";
-import { findById } from "../repositories/employeeRepository.js";
 import * as cardsDatabase from "../repositories/cardRepository.js";
-import { editDate } from "./dataFormatServices.js";
-
-const cryptr = new Cryptr(process.env.SECRET_KEY);
+import { findById } from "../repositories/employeeRepository.js";
+import { isCardExpired, isCVVValid } from "./cardServices.js";
 
 export async function matchWorkerToCard(cardData, workerData) {
   const worker = await findById(workerData.id);
@@ -16,10 +13,10 @@ export async function matchWorkerToCard(cardData, workerData) {
 }
 
 async function verifyDataValidity(card, requestData) {
-  if(requestData.expirationDate < editDate()) throw { type: 'card_expired_error' };
-  if(requestData.CVV !== cryptr.decrypt(card.securityCode)) throw { type: 'ownership_not_match_error' };
+  isCardExpired(requestData);
+  const encryptedPassword: string = isCVVValid(requestData, card);
   const dataToUpdate = {
-    password: cryptr.encrypt(requestData.password)
+    password: encryptedPassword
   }
   const response = await cardsDatabase.update(requestData.cardId, dataToUpdate);
   if(response?.rowCount === 0) throw { type: 'already_exists_error' };

@@ -1,6 +1,7 @@
+import { NextFunction, Request, Response } from "express";
 import { stripHtml } from "string-strip-html";
 
-export default function clearData(req, res, next) {
+export default function clearData(req: Request, res: Response, next: NextFunction) {
   const data = [req.headers, req.params, req.query, req.body];
   const output = [...data];
   for(let i = 0; i < data.length; i++) {
@@ -10,6 +11,5 @@ export default function clearData(req, res, next) {
       }
     }
   }
-  // console.log(data);
   next();
 };
