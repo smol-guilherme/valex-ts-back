@@ -3,13 +3,15 @@ import "express-async-errors";
 import cors from "cors";
 import "dotenv/config"
 import companyRouter from "./routers/companyRouter.js";
-import { companyErrors } from "./middlewares/companyErrorMiddleware.js";
+import workerRouter from "./routers/workerRouter.js";
+import { handleError } from "./middlewares/errorHandler.js";
 
 const app = express();
 
 app.use(json());
 app.use(cors());
 app.use(companyRouter);
-app.use(companyErrors);
+app.use(workerRouter);
+app.use(handleError);
 
 app.listen(process.env.PORT, () => console.log(`Server up and running on PORT ${process.env.PORT}@${Date()}`) ) 

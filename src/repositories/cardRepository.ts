@@ -109,11 +109,11 @@ export async function update(id: number, cardData: CardUpdateData) {
       offset: 2,
     });
 
-  connection.query(
+  return await connection.query(
     `
     UPDATE cards
       SET ${cardColumns}
-    WHERE $1=id
+    WHERE $1=id AND password IS NULL;
   `,
     [id, ...cardValues]
   );
