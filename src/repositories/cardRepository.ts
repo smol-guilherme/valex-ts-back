@@ -85,7 +85,7 @@ export async function insert(cardData: CardInsertData) {
     `
     INSERT INTO cards ("employeeId", number, "cardholderName", "securityCode",
       "expirationDate", password, "isVirtual", "originalCardId", "isBlocked", type)
-    SELECT $1, $2, $3, $4, $5, $6, $7, $8, $9, $10 WHERE NOT EXISTS type=$10 AND employeeId=$1;
+    SELECT $1, $2, $3, $4, $5, $6, $7, $8, $9, $10 WHERE NOT EXISTS (SELECT id FROM cards WHERE type=$10 AND "employeeId"=$1);
   `,
     [
       employeeId,

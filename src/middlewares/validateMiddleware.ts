@@ -7,8 +7,6 @@ export default async function validateData(
   next: NextFunction
 ) {
   const validationData = [req.params, req.body];
-  console.log(validationData);
-  
   for (const index in validationData) {
     if (Object.keys(validationData[index]).length === 0) continue;
     const schema = schemas[setSchema(validationData[index])];
@@ -32,8 +30,8 @@ function setSchema(objectData: Object): string {
       case "shortUrl":
         return "shortUrl";
       default:
-        throw { type: 'no_schema_error' }
+        break;
+      }
     }
-  }
-  return "signin";
+  throw { type: 'no_schema_error' }
 }

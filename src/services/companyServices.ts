@@ -7,11 +7,13 @@ const cryptr = new Cryptr(process.env.SECRET_KEY);
 
 export async function createUserCard(workerData, companyData) {
   const now: Date = new Date();
-  const name = await findNameFromDatabase(Number(workerData.workerId));
+  const entry = await findNameFromDatabase(Number(workerData.workerId));
+  // if(entry === undefined) throw { type: 'not_found_error' };
+  const cardName: string = editNameToCard(entry.fullName);
   const cardData: CardInsertData = {
   	employeeId: workerData.workerId,
     number: faker.finance.creditCardNumber(`####-####-####-####`),
-    cardholderName: name,
+    cardholderName: cardName,
   	securityCode: cryptr.encrypt(faker.finance.creditCardCVV()),
   	expirationDate: editDate(now),
   	isVirtual: false,
@@ -19,8 +21,9 @@ export async function createUserCard(workerData, companyData) {
   	isBlocked: false,
   	type: workerData.type
   };
-  // await insert(cardData);
-  return;
+  const dbCallback = await insert(cardData);
+  // if(dbCallback?.rows.length === 0) throw { type: 'already_exists_error' };
+  return dbCallback;
 }
 
 function editDate(date: Date): string {
@@ -32,9 +35,7 @@ function editDate(date: Date): string {
 
 async function findNameFromDatabase(wId: number) {
   const response = await findById(wId);
-  const cardName: string = editNameToCard(response.fullName);
-  if(response === undefined) throw { type: 'not_found_error' };
-  return cardName;
+  return response;
 }
 
 function editNameToCard(fullName: string): string {
