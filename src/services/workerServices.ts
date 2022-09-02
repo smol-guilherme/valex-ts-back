@@ -1,4 +1,4 @@
-import { CardUpdateData, toggleBlock, update } from "../repositories/cardRepository.js";
+import { CardUpdateData, findCardHistory, toggleBlock, update } from "../repositories/cardRepository.js";
 import { findById } from "../repositories/employeeRepository.js";
 import { isCardExpired, isCardValid, checkCVVValidityAndEncryptPassword, isPasswordCorrect, checkCardOwnership } from "./cardServices.js";
 
@@ -27,10 +27,16 @@ async function activateCardRoutine(card, requestData) {
 export async function toggleBlockCard(workerData, cardData) {
   await findWorker(workerData);
   const card = await isCardValid(cardData);
-  isPasswordCorrect(workerData.password, card.password);
+  isPasswordCorrect(cardData.password, card.password);
   const cardRequest: CardUpdateData = {
     isBlocked: !card.isBlocked,
   }
   toggleBlock(cardData.cardId, cardRequest)
   return;
+}
+
+export async function checkForExpenses(cardData) {
+  await isCardValid(cardData);
+  const history = await findCardHistory(cardData.cardId);
+  return history;
 }

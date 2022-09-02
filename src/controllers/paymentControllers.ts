@@ -6,3 +6,4 @@ export async function newCardExpense(req: Request, res: Response) {
   res.status(201).send(response);
   return;
 }
+

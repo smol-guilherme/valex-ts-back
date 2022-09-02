@@ -139,3 +139,55 @@ export async function toggleBlock(id: number, cardData: CardUpdateData) {
 export async function remove(id: number) {
   connection.query<any, [number]>("DELETE FROM cards WHERE id=$1", [id]);
 }
+
+export async function findCardHistory(cardId: number) {
+  const queryParams = [cardId];
+  const queryString = `
+  SELECT 
+    COALESCE(SUM(amount) , 0) balance, 
+    ARRAY(
+      SELECT json_build_object
+      (
+        'id', payments.id,
+        'businessId', "businessId",
+        'timestamp', timestamp,
+        'amount', amount,
+        'businessName', b.name
+      )
+      FROM payments
+      JOIN businesses b
+      ON b.id="businessId"
+      WHERE payments."cardId"=$1
+      GROUP BY payments.id, b.id
+    ) transactions,
+    ARRAY(
+      SELECT 
+      json_build_object
+      (
+        'id', id,
+        'timestamp', timestamp,
+        'amount', amount
+      )
+      FROM recharges
+      WHERE recharges."cardId"=$1
+    ) recharges
+  FROM 
+  (
+    SELECT r."cardId", 
+    SUM(amount) amount 
+    FROM recharges r 
+    WHERE r."cardId"=$1 
+    GROUP BY r."cardId" 
+    UNION ALL 
+    SELECT p."cardId", 
+    -SUM(amount) amount 
+    FROM payments p 
+    WHERE p."cardId"=$1 
+    GROUP BY 
+    p."cardId"
+    ) AS result 
+    GROUP BY "cardId"
+  ;`;
+  const { rows } = await connection.query(queryString, queryParams);
+  return rows;
+}

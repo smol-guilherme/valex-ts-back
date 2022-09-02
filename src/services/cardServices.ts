@@ -23,7 +23,6 @@ export function checkCVVValidityAndEncryptPassword(requestData, card) {
 export async function isCardValid(cardData) {
   const card = await findById(cardData.cardId);
   if(card === undefined) throw { type: 'not_found_error' };
-  isCardBlocked(card);
   return card;
 }
 
@@ -38,7 +37,7 @@ function isCardActive(userPassword) {
   return;
 }
 
-function isCardBlocked(cardData) {
+export function isCardBlocked(cardData) {
   if(cardData.isBlocked) throw { type: 'card_expired_error' };
   return;
 }

@@ -9,6 +9,10 @@ export const companyId = Joi.object({
     id: Joi.number().required()
 })
 
+export const cardHistory = Joi.object({
+    cardId: Joi.number().required()
+})
+
 export const workerCard = Joi.object({
     cardId: Joi.number().required(),
     CVV: Joi.string().pattern(/[0-9]{3}/).required(),
