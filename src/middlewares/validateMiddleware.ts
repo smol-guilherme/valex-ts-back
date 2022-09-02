@@ -27,10 +27,12 @@ function setSchema(objectData: Object): string {
         return "companyId";
       case "CVV":
         return "workerCard";
+      case "password":
+        if (keys.includes("businessId")) return "payments";
+        if (keys.includes("amount")) return "cardLoad";
+        return "cardBlock";
       case "amount":
         return "cardLoad";
-      case "password":
-        return "cardBlock";
       default:
         break;
     }

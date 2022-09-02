@@ -4,8 +4,9 @@ import { findById } from "../repositories/employeeRepository.js";
 import { insert, CardInsertData } from "../repositories/cardRepository.js";
 import { editDate, editNameToCard } from "./dataFormatServices.js";
 import { isCardExpired, isCardValid } from "./cardServices.js";
-import * as recharges from "../repositories/rechargeRepository.js";
 import { findByApiKey } from "../repositories/companyRepository.js";
+import * as business from "../repositories/businessRepository.js";
+import * as recharges from "../repositories/rechargeRepository.js";
 
 const cryptr = new Cryptr(process.env.SECRET_KEY);
 
@@ -50,6 +51,12 @@ async function findNameFromDatabase(wId: number) {
 
 export async function isCompanyValid(companyAuth) {
   const response = await findByApiKey(companyAuth['x-api-key']);
+  if(response === undefined) throw { type: 'not_found_error' };
+  return response;
+}
+
+export async function isCompanyRegistered(companyData) {
+  const response = await business.findById(companyData.businessId);
   if(response === undefined) throw { type: 'not_found_error' };
   return response;
 }
