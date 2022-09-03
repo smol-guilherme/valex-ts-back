@@ -7,6 +7,5 @@ const paymentRouter = Router();
 
 paymentRouter.get('/payments', (req: Request, res: Response) => res.status(200).send(`ok payments`));
 paymentRouter.post('/payments/new', clearData, validateData, newCardExpense);
-paymentRouter.post('/payments/online', clearData, validateData, );
 
 export default paymentRouter;

@@ -36,3 +36,13 @@ export const payments = Joi.object({
     businessId: Joi.number().required(),
     amount: Joi.number().min(1)
 })
+
+export const onlinePayments = Joi.object({
+    cardId: Joi.number().required(),
+    cardholderName: Joi.string().pattern(/[A-Z]{1,}\W[A-Z]+\W[A-Z]{1,}/).required(),
+    number: Joi.string().pattern(/[0-9]{4}-{1}[0-9]{4}-{1}[0-9]{4}-{1}[0-9]{4}/).required(),
+    CVV: Joi.string().pattern(/[0-9]{3}/).required(),
+    password: Joi.string().pattern(/[0-9]{4}/).required(),
+    businessId: Joi.number().required(),
+    amount: Joi.number().min(1)
+})

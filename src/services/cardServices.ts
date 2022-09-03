@@ -1,6 +1,6 @@
 import Cryptr from "cryptr";
 import { editDate } from "./dataFormatServices.js";
-import { findById } from "../repositories/cardRepository.js";
+import { findByCardDetails, findById } from "../repositories/cardRepository.js";
 
 const cryptr = new Cryptr(process.env.SECRET_KEY);
 
@@ -34,6 +34,12 @@ export function isPasswordCorrect(userPassword: string, cardPassword: string) {
 
 function isCardActive(userPassword) {
   if(userPassword === undefined) throw { type: 'card_expired_error' };
+  return;
+}
+
+export async function isOnlineCardValid(cardData) {
+  const card = await findByCardDetails(cardData.number, cardData.cardholderName, cardData.expirationDate);
+  if(card === undefined) throw { type: 'not_found_error' };
   return;
 }
 
