@@ -2,7 +2,7 @@ import { faker } from "@faker-js/faker";
 import Cryptr from "cryptr";
 import { findById } from "../repositories/employeeRepository.js";
 import { insert, CardInsertData } from "../repositories/cardRepository.js";
-import { editDate, editNameToCard } from "./dataFormatServices.js";
+import { editExpirationDate, editNameToCard } from "./dataFormatServices.js";
 import { isCardExpired, isCardValid } from "./cardServices.js";
 import { findByApiKey } from "../repositories/companyRepository.js";
 import * as business from "../repositories/businessRepository.js";
@@ -21,7 +21,7 @@ export async function createUserCard(workerData, companyAuth) {
     number: faker.finance.creditCardNumber(`####-####-####-####`),
     cardholderName: cardName,
   	securityCode: cryptr.encrypt(CVV),
-  	expirationDate: editDate(),
+  	expirationDate: editExpirationDate(),
   	isVirtual: false,
   	originalCardId: null,
   	isBlocked: false,

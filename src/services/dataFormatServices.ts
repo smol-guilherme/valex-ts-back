@@ -1,9 +1,16 @@
-export function editDate(): string {
+export function editExpirationDate(): string {
   const now: Date = new Date();
   const month: string = String(now.getUTCMonth())
   const year: string = String(now.getUTCFullYear() + 5).substring(2);
   if(month.length === 1) return `0${month}/${year}`;
   return `${month}/${year}`;
+}
+
+export function editTodayDate(): string {
+  const now: Date = new Date();
+  const month: string = String(now.getUTCMonth())
+  if(month.length === 1) return `0${month}/${String(now.getUTCFullYear()).substring(2)}`;
+  return `${month}/${String(now.getUTCFullYear()).substring(2)}`;
 }
 
 export function editNameToCard(fullName: string): string {

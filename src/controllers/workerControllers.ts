@@ -18,3 +18,11 @@ export async function getCardHistory(req: Request, res: Response) {
   res.status(200).send(response);
   return;
 }
+
+export async function newVirtualCard(req: Request, res: Response) {
+
+}
+
+export async function deleteVirtualCard(req: Request, res: Response) {
+  
+}

@@ -1,12 +1,20 @@
 import Cryptr from "cryptr";
-import { editDate } from "./dataFormatServices.js";
+import { editExpirationDate, editTodayDate } from "./dataFormatServices.js";
 import { findByCardDetails, findById } from "../repositories/cardRepository.js";
 
 const cryptr = new Cryptr(process.env.SECRET_KEY);
 
 export function isCardExpired(cardData) {
-  if(cardData.expirationDate < editDate()) throw { type: 'card_expired_error' };
+  const { month: cardMonth, year: cardYear } = splitDateValues(cardData.expirationDate);
+  const { month: dateMonth, year: dateYear } = splitDateValues(editTodayDate());
+  if(cardYear <= dateYear)
+    if(cardMonth < dateMonth) throw { type: 'card_expired_error' };
   return;
+}
+
+function splitDateValues(date: string) {
+  const result: string[] = date.split("/");
+  return { month: result[0], year: result[1] }
 }
 
 // verificar a usabilidade dessa função

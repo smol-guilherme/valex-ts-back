@@ -3,11 +3,16 @@ import { findById } from "../repositories/employeeRepository.js";
 import { isCardExpired, isCardValid, checkCVVValidityAndEncryptPassword, isPasswordCorrect, checkCardOwnership } from "./cardServices.js";
 
 export async function matchWorkerToCard(cardData, workerData) {
-  const worker = await findWorker(workerData);
-  const card = await isCardValid(cardData);
+  const { worker, card } = await workerValidationRoutine(cardData, workerData);
   if(worker.id !== card.employeeId) throw { type: 'ownership_not_match_error' };
   await activateCardRoutine(card, cardData);
   return;
+}
+
+async function workerValidationRoutine(cardData, workerData) {
+  const worker = await findWorker(workerData);
+  const card = await isCardValid(cardData);
+  return { worker, card };
 }
 
 async function findWorker(workerData) {
@@ -25,8 +30,7 @@ async function activateCardRoutine(card, requestData) {
 }
 
 export async function toggleBlockCard(workerData, cardData) {
-  await findWorker(workerData);
-  const card = await isCardValid(cardData);
+  const { worker, card } = await workerValidationRoutine(cardData, workerData);
   isPasswordCorrect(cardData.password, card.password);
   const cardRequest: CardUpdateData = {
     isBlocked: !card.isBlocked,
