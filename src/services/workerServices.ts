@@ -1,10 +1,9 @@
-import { CardUpdateData, findCardHistory, toggleBlock, update } from "../repositories/cardRepository.js";
+import { CardUpdateData, findCardHistory, remove, toggleBlock, update } from "../repositories/cardRepository.js";
 import { findById } from "../repositories/employeeRepository.js";
 import { isCardExpired, isCardValid, checkCVVValidityAndEncryptPassword, isPasswordCorrect, checkCardOwnership, setOnlineCardData } from "./cardServices.js";
 
 export async function matchWorkerToCard(cardData, workerData) {
-  const { worker, card } = await workerValidationRoutine(cardData, workerData);
-  if(worker.id !== card.employeeId) throw { type: 'ownership_not_match_error' };
+  const card = await workerValidationRoutine(cardData, workerData);
   await activateCardRoutine(card, cardData);
   return;
 }
@@ -12,7 +11,8 @@ export async function matchWorkerToCard(cardData, workerData) {
 async function workerValidationRoutine(cardData, workerData) {
   const worker = await findWorker(workerData);
   const card = await isCardValid(cardData);
-  return { worker, card };
+  if(worker.id !== card.employeeId) throw { type: 'ownership_not_match_error' };
+  return card;
 }
 
 async function findWorker(workerData) {
@@ -31,7 +31,7 @@ async function activateCardRoutine(card, requestData) {
 }
 
 export async function toggleBlockCard(workerData, cardData) {
-  const { worker, card } = await workerValidationRoutine(cardData, workerData);
+  const card = await workerValidationRoutine(cardData, workerData);
   isPasswordCorrect(cardData.password, card.password);
   const cardRequest: CardUpdateData = {
     isBlocked: !card.isBlocked,
@@ -46,9 +46,17 @@ export async function checkForExpenses(cardData) {
   return history;
 }
 
-export async function setupOnlineCard(cardData, workerData) {
-  const { worker, card } = await workerValidationRoutine(cardData, workerData);
+export async function setupVirtualCard(cardData, workerData) {
+  const card = await workerValidationRoutine(cardData, workerData);
   isPasswordCorrect(cardData.password, card.password);
   const CVV = await setOnlineCardData(card)
   return { CVV };
+}
+
+export async function virtualCardDeletion(cardData, workerData) {
+  const card = await workerValidationRoutine(cardData, workerData);
+  if(!card.isVirtual) throw { type: 'type_mismatch_error' };
+  isPasswordCorrect(cardData.password, card.password);
+  await remove(card.id)
+  return;
 }
