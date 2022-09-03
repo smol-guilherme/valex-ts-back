@@ -1,6 +1,6 @@
 import { CardUpdateData, findCardHistory, toggleBlock, update } from "../repositories/cardRepository.js";
 import { findById } from "../repositories/employeeRepository.js";
-import { isCardExpired, isCardValid, checkCVVValidityAndEncryptPassword, isPasswordCorrect, checkCardOwnership } from "./cardServices.js";
+import { isCardExpired, isCardValid, checkCVVValidityAndEncryptPassword, isPasswordCorrect, checkCardOwnership, setOnlineCardData } from "./cardServices.js";
 
 export async function matchWorkerToCard(cardData, workerData) {
   const { worker, card } = await workerValidationRoutine(cardData, workerData);
@@ -22,6 +22,7 @@ async function findWorker(workerData) {
 }
 
 async function activateCardRoutine(card, requestData) {
+  if(card.isVirtual) throw { type: 'action_not_necessary_error' };
   isCardExpired(requestData);
   const dataToUpdate = { password: checkCVVValidityAndEncryptPassword(requestData, card) }
   const response = await update(requestData.cardId, dataToUpdate);
@@ -43,4 +44,11 @@ export async function checkForExpenses(cardData) {
   await isCardValid(cardData);
   const history = await findCardHistory(cardData.cardId);
   return history;
+}
+
+export async function setupOnlineCard(cardData, workerData) {
+  const { worker, card } = await workerValidationRoutine(cardData, workerData);
+  isPasswordCorrect(cardData.password, card.password);
+  const CVV = await setOnlineCardData(card)
+  return { CVV };
 }

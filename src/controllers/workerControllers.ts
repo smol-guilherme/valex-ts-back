@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { matchWorkerToCard, toggleBlockCard, checkForExpenses } from "../services/workerServices.js";
+import { matchWorkerToCard, toggleBlockCard, checkForExpenses, setupOnlineCard } from "../services/workerServices.js";
 
 export async function activateCard(req: Request, res: Response) {
   await matchWorkerToCard(req.body, req.params);
@@ -20,9 +20,11 @@ export async function getCardHistory(req: Request, res: Response) {
 }
 
 export async function newVirtualCard(req: Request, res: Response) {
-
+  const response = await setupOnlineCard(req.body, req.params);
+  res.status(201).send(response);
+  return;
 }
 
 export async function deleteVirtualCard(req: Request, res: Response) {
-  
+
 }

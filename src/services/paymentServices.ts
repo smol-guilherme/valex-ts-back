@@ -3,16 +3,40 @@ import { isCardBlocked, isCardExpired, isCardValid, isOnlineCardValid, isPasswor
 import { isCompanyRegistered } from "./companyServices.js";
 
 export async function insertNewExpense(transactionData) {
-  const company = await isCompanyRegistered(transactionData);
-  const card = await isCardValid(transactionData);
+  const { card, company } = await transactionDataFetch(transactionData);
+  if(card.isVirtual) throw { type: 'type_mismatch_error' };
+  cardValidationRoutine(card, company, transactionData)
+  await executeTransaction(transactionData, card.id);
+  return;
+}
+
+export async function insertNewOnlineExpense(transactionData) {
+  const { card, company } = await transactionDataFetch(transactionData);
   if(Object.keys(transactionData).includes('cardholderName')) await isOnlineCardValid(card);
+  cardValidationRoutine(card, company, transactionData)
+  await executeTransaction(transactionData, card.originalCardId);
+  return;
+}
+
+function cardValidationRoutine(card, company, transactionData) {
   isTypeValid(card, company);
   isCardBlocked(card);
   isCardExpired(card);
   isPasswordCorrect(transactionData.password, card.password);
+  return;
+}
+
+async function transactionDataFetch(transactionData) {
+  const company = await isCompanyRegistered(transactionData);
+  const card = await isCardValid(transactionData);
+  return { card, company };
+}
+
+async function executeTransaction(transactionData, cardId) {
   delete transactionData.password;
   const paymentData: payments.PaymentInsertData = {
-    ...transactionData
+    ...transactionData,
+    cardId
   }
   const isSet = await payments.insert(paymentData);
   if(isSet === 0) throw { type: 'insuficient_funds_error' };
