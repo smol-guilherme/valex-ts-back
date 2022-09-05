@@ -39,12 +39,13 @@ O projeto consiste em um serviço de emissão de cartões (vales) para empresas.
 >  } 
 >  ```
 
-3. A resposta da requisição é o identificador do funcionário cujo cartão foi cadastrado e o código de verificação do cartão, a ser transferido para o mesmo para uso conforme necessário.
+3. A resposta da requisição é o idenficador do cartão, o do funcionário cujo cartão foi cadastrado e o código de verificação do cartão, a ser transferido para o mesmo para uso conforme necessário.
 
 ``` 
 { 
   "workerId": string, 
-  "CVV": string 
+  "CVV": string, 
+  "cardId": integer
 } 
 ```
 
@@ -114,7 +115,13 @@ O projeto consiste em um serviço de emissão de cartões (vales) para empresas.
 >    "password": string
 >  } 
 >  ```
-3. A resposta da requisição é o código de verificação (*CVV*) do novo cartão virtual. Este deve ser utilizado ao invés do código do cartão original para compras realizadas com este novo cartão.
+3. A resposta da requisição é o código de verificação (*CVV*) e o número identificador do novo cartão virtual. Este deve ser utilizado ao invés do código do cartão original para compras realizadas com este novo cartão.
+``` 
+{ 
+  "CVV": string, 
+  "cardId": integer
+} 
+```
 
 - Para a remoção de um cartão virtual já existente, funcionários devem:
 1. Enviar uma requisição do tipo `DELETE` na rota `workers/:id/virtual`, aonde `:id` é uma string numérica referente ao identificador do funcionário no banco de dados.

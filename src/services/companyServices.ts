@@ -8,8 +8,8 @@ export async function createUserCard(workerData, companyAuth) {
   await isCompanyValid(companyAuth);
   const entry = await findNameFromDatabase(Number(workerData.workerId));
   if(entry === undefined) throw { type: 'not_found_error' };
-  const CVV = await setCardData(entry, workerData)
-  return { workerId: workerData.workerId, CVV };
+  const { CVV, cardId } = await setCardData(entry, workerData)
+  return { workerId: workerData.workerId, CVV, cardId };
 }
 
 export async function loadCardBalance(loadData, companyAuth) {

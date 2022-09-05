@@ -50,8 +50,8 @@ export async function checkForExpenses(cardData) {
 export async function setupVirtualCard(cardData, workerData) {
   const card = await workerValidationRoutine(cardData, workerData);
   isPasswordCorrect(cardData.password, card.password);
-  const CVV = await setOnlineCardData(card)
-  return { CVV };
+  const { CVV, cardId } = await setOnlineCardData(card)
+  return { CVV, cardId };
 }
 
 export async function virtualCardDeletion(cardData, workerData) {

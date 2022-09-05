@@ -100,8 +100,8 @@ export async function setOnlineCardData(cardData) {
     securityCode: cryptr.encrypt(CVV),
     originalCardId: originalId,
   };
-  await dbInsertCallback(requestData);
-  return CVV;
+  const cardId = await dbInsertCallback(requestData);
+  return { CVV, cardId };
 }
 
 export async function setCardData(entry, workerData) {
@@ -118,12 +118,12 @@ export async function setCardData(entry, workerData) {
     isBlocked: false,
     type: workerData.type,
   };
-  await dbInsertCallback(cardData);
-  return CVV;
+  const cardId = await dbInsertCallback(cardData);
+  return { CVV, cardId };
 }
 
 async function dbInsertCallback(data) {
-  const dbCallback = await insert(data);
-  if (dbCallback?.rowCount === 0) throw { type: "already_exists_error" };
-  return dbCallback;
+  const { rowCount, rows } = await insert(data);
+  if (rowCount === 0) throw { type: "already_exists_error" };
+  return rows[0].id;
 }

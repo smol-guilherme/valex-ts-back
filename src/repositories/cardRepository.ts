@@ -100,8 +100,8 @@ export async function insert(cardData: CardInsertData) {
         AND "employeeId"=$1 
       ) OR
       $7=true
-      ;
-  `,
+    RETURNING id
+  ;`,
     [
       employeeId,
       number,
