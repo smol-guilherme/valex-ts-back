@@ -1,10 +1,10 @@
 import * as payments from "../repositories/paymentRepository.js";
-import { isCardBlocked, isCardExpired, isCardValid, isOnlineCardValid, isPasswordCorrect, isTypeValid } from "./cardServices.js";
+import { isCardBlocked, isCardExpired, isCardValid, isCardVirtual, isOnlineCardValid, isPasswordCorrect, isTypeValid } from "./cardServices.js";
 import { isCompanyRegistered } from "./companyServices.js";
 
 export async function insertNewExpense(transactionData) {
   const { card, company } = await transactionDataFetch(transactionData);
-  if(card.isVirtual) throw { type: 'type_mismatch_error' };
+  isCardVirtual(card);
   cardValidationRoutine(card, company, transactionData)
   await executeTransaction(transactionData, card.id);
   return;
@@ -12,7 +12,7 @@ export async function insertNewExpense(transactionData) {
 
 export async function insertNewOnlineExpense(transactionData) {
   const { card, company } = await transactionDataFetch(transactionData);
-  if(Object.keys(transactionData).includes('cardholderName')) await isOnlineCardValid(card);
+  if(Object.keys(transactionData).includes('cardholderName')) await isOnlineCardValid(transactionData);
   cardValidationRoutine(card, company, transactionData)
   await executeTransaction(transactionData, card.originalCardId);
   return;

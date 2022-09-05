@@ -27,6 +27,6 @@ export async function newVirtualCard(req: Request, res: Response) {
 
 export async function deleteVirtualCard(req: Request, res: Response) {
   await virtualCardDeletion(req.body, req.params);
-  res.status(200).send(0);
+  res.status(200).send();
   return;
 }

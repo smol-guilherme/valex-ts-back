@@ -13,7 +13,7 @@ export function handleError(error, req: Request, res: Response, next: NextFuncti
     if(error.type === 'no_schema_error') return res.status(400).send();
     if(error.type === 'insuficient_funds_error') return res.status(400).send();
     if(error.type === 'already_exists_error') return res.status(409).send();
-    if(error.type === 'card_expired_error') return res.status(401).send();
+    if(error.type === 'card_expired_or_disabled_error') return res.status(401).send();
     if(error.type === 'ownership_not_match_error') return res.status(401).send();
     if(error.type === 'type_mismatch_error') return res.status(401).send();
     

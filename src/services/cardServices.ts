@@ -20,7 +20,7 @@ export function isCardExpired(cardData) {
   );
   const { month: dateMonth, year: dateYear } = splitDateValues(editTodayDate());
   if (cardYear <= dateYear)
-    if (cardMonth < dateMonth) throw { type: "card_expired_error" };
+    if (cardMonth < dateMonth) throw { type: "card_expired_or_disabled_error" };
   return;
 }
 
@@ -31,8 +31,7 @@ function splitDateValues(date: string) {
 
 // verificar a usabilidade dessa função
 export function checkCardOwnership(workerId, cardData) {
-  if (workerId !== cardData.workerId)
-    throw { type: "ownership_not_match_error" };
+  if (workerId !== cardData.workerId) throw { type: "ownership_not_match_error" };
   return;
 }
 
@@ -55,23 +54,32 @@ export function isPasswordCorrect(userPassword: string, cardPassword: string) {
   return;
 }
 
-function isCardActive(userPassword) {
-  if (userPassword === undefined) throw { type: "card_expired_error" };
+export function isCardActive(userPassword) {
+  if (userPassword === undefined) throw { type: "card_expired_or_disabled_error" };
+  return;
+}
+
+export function isCardEnabled(cardData) {
+  if (cardData.userPassword === undefined) throw { type: "card_expired_or_disabled_error" };
   return;
 }
 
 export async function isOnlineCardValid(cardData) {
   const card = await findByCardDetails(
     cardData.number,
-    cardData.cardholderName,
-    cardData.expirationDate
+    cardData.cardholderName
   );
   if (card === undefined) throw { type: "not_found_error" };
   return;
 }
 
+export function isCardVirtual(cardData) {
+  if(cardData.isVirtual) throw { type: 'action_not_necessary_error' };
+  return;
+}
+
 export function isCardBlocked(cardData) {
-  if (cardData.isBlocked) throw { type: "card_expired_error" };
+  if (cardData.isBlocked) throw { type: "card_expired_or_disabled_error" };
   return;
 }
 
@@ -86,7 +94,7 @@ export async function setOnlineCardData(cardData) {
   delete cardData.id;
   const requestData: CardInsertData = {
     ...cardData,
-    number: faker.finance.creditCardNumber(`5###-####-####-####`),
+    number: faker.finance.creditCardNumber("mastercard"),
     expirationDate: editExpirationDate(),
     isVirtual: true,
     securityCode: cryptr.encrypt(CVV),
@@ -99,18 +107,9 @@ export async function setOnlineCardData(cardData) {
 export async function setCardData(entry, workerData) {
   const cardName: string = editNameToCard(entry.fullName);
   const CVV = faker.finance.creditCardCVV();
-  const cardNumber = faker.finance
-    .creditCardNumber("mastercard")
-    .split("")
-    .map((digit, index) => {
-      if ((index + 1) % 4 === 0 && index < cardNumber.length - 1)
-        return digit + "-";
-      return digit;
-    })
-    .join("");
   const cardData: CardInsertData = {
     employeeId: workerData.workerId,
-    number: cardNumber,
+    number: faker.finance.creditCardNumber(`####-####-####-####`),
     cardholderName: cardName,
     securityCode: cryptr.encrypt(CVV),
     expirationDate: editExpirationDate(),

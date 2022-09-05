@@ -1,5 +1,5 @@
 import { findById } from "../repositories/employeeRepository.js";
-import { isCardExpired, isCardValid, setCardData } from "./cardServices.js";
+import { isCardEnabled, isCardExpired, isCardValid, isCardVirtual, setCardData } from "./cardServices.js";
 import { findByApiKey } from "../repositories/companyRepository.js";
 import * as business from "../repositories/businessRepository.js";
 import * as recharges from "../repositories/rechargeRepository.js";
@@ -15,8 +15,9 @@ export async function createUserCard(workerData, companyAuth) {
 export async function loadCardBalance(loadData, companyAuth) {
   const companyData = await isCompanyValid(companyAuth);
   const card = await isCardValid(loadData);
-  if(card.isVirtual) throw { type: 'action_not_necessary_error' };
+  isCardVirtual(card);
   isCardExpired(card);
+  isCardEnabled(card);
   const insertData: recharges.RechargeInsertData = {
     ...loadData,
     businessId: companyData.id,

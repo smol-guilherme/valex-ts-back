@@ -1,6 +1,7 @@
+import { faker } from "@faker-js/faker";
 import { CardUpdateData, findCardHistory, remove, toggleBlock, update } from "../repositories/cardRepository.js";
 import { findById } from "../repositories/employeeRepository.js";
-import { isCardExpired, isCardValid, checkCVVValidityAndEncryptPassword, isPasswordCorrect, checkCardOwnership, setOnlineCardData } from "./cardServices.js";
+import { isCardExpired, isCardValid, checkCVVValidityAndEncryptPassword, isPasswordCorrect, setOnlineCardData, isCardVirtual } from "./cardServices.js";
 
 export async function matchWorkerToCard(cardData, workerData) {
   const card = await workerValidationRoutine(cardData, workerData);
@@ -22,8 +23,8 @@ async function findWorker(workerData) {
 }
 
 async function activateCardRoutine(card, requestData) {
-  if(card.isVirtual) throw { type: 'action_not_necessary_error' };
-  isCardExpired(requestData);
+  isCardVirtual(card);
+  isCardExpired(card);
   const dataToUpdate = { password: checkCVVValidityAndEncryptPassword(requestData, card) }
   const response = await update(requestData.cardId, dataToUpdate);
   if(response?.rowCount === 0) throw { type: 'already_exists_error' };
