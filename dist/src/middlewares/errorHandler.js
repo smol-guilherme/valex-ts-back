@@ -1,12 +1,14 @@
-export function handleError(error, req, res, next) {
-    var _a, _b, _c;
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.handleError = void 0;
+function handleError(error, req, res, next) {
     console.log(error);
     if (isJoiError(error)) {
-        if (((_a = error === null || error === void 0 ? void 0 : error.details[0]) === null || _a === void 0 ? void 0 : _a.type) === 'string.pattern.base')
+        if (error?.details[0]?.type === 'string.pattern.base')
             return res.status(422).send();
-        if (((_b = error === null || error === void 0 ? void 0 : error.details[0]) === null || _b === void 0 ? void 0 : _b.type) === 'any.only')
+        if (error?.details[0]?.type === 'any.only')
             return res.status(422).send();
-        if (((_c = error === null || error === void 0 ? void 0 : error.details[0]) === null || _c === void 0 ? void 0 : _c.type) === 'string.empty')
+        if (error?.details[0]?.type === 'string.empty')
             return res.status(422).send();
     }
     if (error.type === 'not_found_error')
@@ -27,6 +29,7 @@ export function handleError(error, req, res, next) {
         return res.status(401).send();
     res.status(500).send();
 }
+exports.handleError = handleError;
 function isJoiError(error) {
     if (Object.keys(error).includes('details'))
         return true;

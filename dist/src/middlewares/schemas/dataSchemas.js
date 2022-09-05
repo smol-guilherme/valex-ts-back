@@ -1,40 +1,46 @@
-import Joi from "joi";
-export var cardType = Joi.object({
-    workerId: Joi.number().required(),
-    type: Joi.string().valid('groceries', 'restaurant', 'transport', 'education', 'health').required()
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.onlinePayments = exports.payments = exports.cardBlock = exports.cardLoad = exports.workerCard = exports.cardHistory = exports.companyId = exports.cardType = void 0;
+const joi_1 = __importDefault(require("joi"));
+exports.cardType = joi_1.default.object({
+    workerId: joi_1.default.number().required(),
+    type: joi_1.default.string().valid('groceries', 'restaurant', 'transport', 'education', 'health').required()
 });
-export var companyId = Joi.object({
-    id: Joi.number().required()
+exports.companyId = joi_1.default.object({
+    id: joi_1.default.number().required()
 });
-export var cardHistory = Joi.object({
-    cardId: Joi.number().required()
+exports.cardHistory = joi_1.default.object({
+    cardId: joi_1.default.number().required()
 });
-export var workerCard = Joi.object({
-    cardId: Joi.number().required(),
-    CVV: Joi.string().pattern(/[0-9]{3}/).required(),
-    password: Joi.string().pattern(/[0-9]{4}/).required(),
-    repeatPassword: Joi.ref('password')
+exports.workerCard = joi_1.default.object({
+    cardId: joi_1.default.number().required(),
+    CVV: joi_1.default.string().pattern(/[0-9]{3}/).required(),
+    password: joi_1.default.string().pattern(/[0-9]{4}/).required(),
+    repeatPassword: joi_1.default.ref('password')
 });
-export var cardLoad = Joi.object({
-    cardId: Joi.number().required(),
-    amount: Joi.number().min(1)
+exports.cardLoad = joi_1.default.object({
+    cardId: joi_1.default.number().required(),
+    amount: joi_1.default.number().min(1),
 });
-export var cardBlock = Joi.object({
-    cardId: Joi.number().required(),
-    password: Joi.string().pattern(/[0-9]{4}/).required()
+exports.cardBlock = joi_1.default.object({
+    cardId: joi_1.default.number().required(),
+    password: joi_1.default.string().pattern(/[0-9]{4}/).required(),
 });
-export var payments = Joi.object({
-    cardId: Joi.number().required(),
-    password: Joi.string().pattern(/[0-9]{4}/).required(),
-    businessId: Joi.number().required(),
-    amount: Joi.number().min(1)
+exports.payments = joi_1.default.object({
+    cardId: joi_1.default.number().required(),
+    password: joi_1.default.string().pattern(/[0-9]{4}/).required(),
+    businessId: joi_1.default.number().required(),
+    amount: joi_1.default.number().min(1)
 });
-export var onlinePayments = Joi.object({
-    cardId: Joi.number().required(),
-    cardholderName: Joi.string().pattern(/[A-Z]{1,}\W[A-Z]+\W[A-Z]{1,}/).required(),
-    number: Joi.string().pattern(/[0-9]{4}-{1}[0-9]{4}-{1}[0-9]{4}-{1}[0-9]{4}/).required(),
-    CVV: Joi.string().pattern(/[0-9]{3}/).required(),
-    password: Joi.string().pattern(/[0-9]{4}/).required(),
-    businessId: Joi.number().required(),
-    amount: Joi.number().min(1)
+exports.onlinePayments = joi_1.default.object({
+    cardId: joi_1.default.number().required(),
+    cardholderName: joi_1.default.string().pattern(/[A-Z]{1,}\W[A-Z]+\W[A-Z]{1,}/).required(),
+    number: joi_1.default.string().pattern(/[0-9]{4}-{1}[0-9]{4}-{1}[0-9]{4}-{1}[0-9]{4}/).required(),
+    CVV: joi_1.default.string().pattern(/[0-9]{3}/).required(),
+    password: joi_1.default.string().pattern(/[0-9]{4}/).required(),
+    businessId: joi_1.default.number().required(),
+    amount: joi_1.default.number().min(1)
 });
