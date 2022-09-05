@@ -1,5 +1,5 @@
 import { connection } from "../databases/database.js";
-import { mapObjectToUpdateQuery } from "../../valex/utils/sqlUtils.js";
+import { mapObjectToUpdateQuery } from "../utils/sqlUtils.js";
 
 export type TransactionTypes =
   | "groceries"
