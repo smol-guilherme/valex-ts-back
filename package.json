@@ -7,7 +7,8 @@
   "exports": "./dist/index.js",
   "scripts": {
     "dev": "nodemon src/index.ts",
-    "start": "node src/index.ts"
+    "start": "node src/index.ts",
+    "build": "tsc --build"
   },
   "keywords": [],
   "author": "",
